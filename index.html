@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para mi San Valentín</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-pastel-yellow: #fdfd96;
+            --color-pastel-pink: #ff8fa3;
+            --color-bg-pink: #ffe6eb;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-bg-pink);
+            font-family: 'Chewy', cursive;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative; /* Necesario para el fondo de estrellas */
+        }
+
+        /* --- FONDO DE ESTRELLAS --- */
+        #stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Para que no interfiera con los clicks */
+            z-index: -1; /* Detrás de todo */
+        }
+
+        .star {
+            position: absolute;
+            top: -50px; /* Empiezan arriba fuera de pantalla */
+            background: white;
+            border-radius: 50%;
+            /* Un brillo amarillento bonito */
+            box-shadow: 
+                0 0 10px var(--color-pastel-yellow),
+                0 0 20px white;
+            opacity: 0.8;
+            /* Animación doble: Caída y Zigzag (sway) */
+            animation: fallDown linear forwards, sway ease-in-out infinite alternate;
+        }
+
+        @keyframes fallDown {
+            to {
+                top: 110vh; /* Caen hasta salir por abajo */
+                opacity: 0;
+            }
+        }
+
+        @keyframes sway {
+            from { transform: translateX(-50px) rotate(0deg); }
+            to { transform: translateX(50px) rotate(45deg); }
+        }
+        /* --------------------------- */
+
+
+        /* Botón de Música */
+        #mute-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid var(--color-pastel-pink);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        #mute-btn:hover { transform: scale(1.1); }
+
+        /* Contenedor Principal */
+        .container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            /* Aseguramos que el contenido no se salga en pantallas pequeñas por la fuente gigante */
+            max-width: 90%; 
+        }
+
+        /* Texto de Bienvenida */
+        .welcome-text {
+            /* CAMBIO AQUI: Tamaño aumentado 2.5 veces (era 5rem) */
+            font-size: 12.5rem; 
+            line-height: 1; /* Para que no ocupe tanto espacio vertical */
+            color: var(--color-pastel-yellow);
+            text-shadow: 
+                4px 4px 0px var(--color-pastel-pink), 
+                -2px -2px 0 #fff,
+                0 0 20px rgba(255, 255, 255, 0.5); /* Un poco más de glow */
+            opacity: 0; 
+            margin: 0;
+            margin-bottom: 30px;
+            cursor: default;
+            white-space: nowrap; /* Intenta mantenerlo en una línea si cabe */
+        }
+        
+        /* Ajuste para móviles: si la pantalla es muy chica, reducimos un poco la fuente gigante */
+        @media (max-width: 768px) {
+             .welcome-text {
+                 font-size: 6rem; /* Aún grande, pero manejable en celular */
+                 white-space: normal; /* Permite saltos de línea en celular */
+             }
+        }
+
+        /* Animación de entrada: Viene de abajo y hace Pop */
+        @keyframes popUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            70% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        /* Animación de rebote constante */
+        @keyframes floating {
+            0% { transform: rotate(-2deg) translateY(0px); }
+            50% { transform: rotate(2deg) translateY(-15px); }
+            100% { transform: rotate(-2deg) translateY(0px); }
+        }
+
+        .animate-enter {
+            animation: popUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .animate-bounce {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        /* Imagen de Pompompurin */
+        #pompom-gif {
+            width: 200px;
+            height: auto;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 40px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #pompom-gif.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Botón Comenzar estilo Globo */
+        .start-btn {
+            background-color: var(--color-pastel-pink);
+            color: white;
+            font-family: 'Chewy', cursive;
+            font-size: 2.5rem;
+            padding: 15px 50px;
+            border: 5px solid white;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 12px 0 #e07a8c, 0 15px 25px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            top: 0;
+        }
+
+        .start-btn:active {
+            top: 12px;
+            box-shadow: 0 0 0 #e07a8c, 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .start-btn:hover {
+            background-color: #ff9cb0;
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="mute-btn" onclick="toggleMusic()">🔇</button>
+
+    <div id="stars-container"></div>
+
+    <div class="container">
+        <h1 class="welcome-text" id="welcome-msg">Bienvenida mi amor</h1>
+        <img src="pompompurin.gif" alt="Pompompurin saludando" id="pompom-gif">
+        <br>
+        <a href="intro.html" class="start-btn" id="start-btn">Comenzar</a>
+    </div>
+
+    <script>
+        const welcomeMsg = document.getElementById('welcome-msg');
+        const pompomGif = document.getElementById('pompom-gif');
+        const music = document.getElementById('bg-music');
+        const muteBtn = document.getElementById('mute-btn');
+        const starsContainer = document.getElementById('stars-container');
+        let isPlaying = false;
+
+        // --- INICIO DE ANIMACIONES ---
+        window.onload = () => {
+            welcomeMsg.classList.add('animate-enter');
+
+            setTimeout(() => {
+                welcomeMsg.classList.remove('animate-enter');
+                welcomeMsg.style.opacity = 1;
+                welcomeMsg.classList.add('animate-bounce');
+            }, 1000);
+
+            setTimeout(() => {
+                pompomGif.classList.add('show');
+            }, 2000);
+        };
+
+        // --- LÓGICA DE MÚSICA ---
+        function toggleMusic() {
+            if (isPlaying) {
+                music.pause();
+                muteBtn.innerHTML = "🔇";
+            } else {
+                music.play();
+                muteBtn.innerHTML = "🔊";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        document.body.addEventListener('click', () => {
+            if(!isPlaying && music.paused) {
+                toggleMusic();
+            }
+        }, { once: true });
+
+
+        // --- LÓGICA DE LLUVIA DE ESTRELLAS ZIGZAG ---
+        function createStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+
+            // Posición horizontal aleatoria
+            star.style.left = Math.random() * 100 + 'vw';
+            
+            // Tamaño aleatorio (entre 5px y 20px)
+            let size = Math.random() * 15 + 5 + 'px';
+            star.style.width = size;
+            star.style.height = size;
+
+            // Duración de caída aleatoria (entre 4s y 10s)
+            let fallDuration = Math.random() * 6 + 4 + 's';
+            
+            // Duración del zigzag (sway) aleatoria (entre 2s y 4s)
+            let swayDuration = Math.random() * 2 + 2 + 's';
+
+            // Aplicamos los tiempos a las animaciones CSS
+            star.style.animationDuration = `${fallDuration}, ${swayDuration}`;
+
+            starsContainer.appendChild(star);
+
+            // Eliminar la estrella cuando termina de caer para no saturar la memoria
+            setTimeout(() => {
+                star.remove();
+            }, parseFloat(fallDuration) * 1000);
+        }
+
+        // Crear una estrella cada 200 milisegundos
+        setInterval(createStar, 200);
+
+    </script>
+</body>
+</html>

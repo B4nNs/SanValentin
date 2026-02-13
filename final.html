@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Te Amo!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+    <style>
+        :root { --color-pastel-yellow: #fdfd96; --color-pastel-pink: #ff8fa3; --color-bg-pink: #ffe6eb; --color-text: #d87093; }
+        body { margin: 0; padding: 20px; background-color: var(--color-bg-pink); font-family: 'Chewy', cursive; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; position: relative; text-align: center; }
+
+        h1 { font-size: 3rem; color: var(--color-text); margin-bottom: 20px; text-shadow: 2px 2px 0 white; max-width: 800px; }
+        
+        .gif-container { width: 280px; height: auto; border: 6px solid white; border-radius: 50%; box-shadow: 0 0 30px rgba(255, 143, 163, 0.6); animation: float 3s ease-in-out infinite; }
+        
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+
+        /* FONDO */
+        #stars-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .star { position: absolute; top: -50px; background: white; border-radius: 50%; box-shadow: 0 0 10px var(--color-pastel-yellow); opacity: 0.8; animation: fallDown linear forwards, sway ease-in-out infinite alternate; }
+        @keyframes fallDown { to { top: 110vh; opacity: 0; } }
+        @keyframes sway { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" loop autoplay> <source src="musica.mp3" type="audio/mpeg"> </audio>
+    <div id="stars-container"></div>
+
+    <img src="final.gif" class="gif-container" alt="Gif final">
+
+    <h1>Soberbio mi amor, nunca dude de ti, este fue el final de nuestra trivia de amor y espero que te haya gustado.<br><br>Te amo muchoooo y ojala te la hayas pasado bien 😁</h1>
+
+    <script>
+        const starsContainer = document.getElementById('stars-container');
+        setInterval(() => {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.width = Math.random() * 15 + 5 + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDuration = (Math.random() * 5 + 3) + 's, ' + (Math.random() * 2 + 2) + 's';
+            starsContainer.appendChild(star);
+            setTimeout(() => star.remove(), 8000);
+        }, 150);
+        document.body.addEventListener('click', () => { document.getElementById('bg-music').play(); }, { once: true });
+    </script>
+</body>
+</html>

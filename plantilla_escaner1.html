@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Amor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <style>
+        :root { --color-pastel-yellow: #fdfd96; --color-pastel-pink: #ff8fa3; --color-bg-pink: #ffe6eb; --color-text: #d87093; }
+        body { margin: 0; padding: 10px; background-color: var(--color-bg-pink); font-family: 'Chewy', cursive; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; position: relative; text-align: center; }
+
+        /* TEXTOS */
+        h2 { color: var(--color-text); font-size: 2rem; margin: 10px 0; text-shadow: 2px 2px 0 white; width: 90%; }
+        
+        /* CONTENEDOR PRINCIPAL */
+        .card { background: rgba(255,255,255,0.95); padding: 20px; border-radius: 30px; border: 4px solid var(--color-pastel-pink); width: 90%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; align-items: center; z-index: 10; }
+
+        /* GIF */
+        .gif-img { width: 150px; height: 150px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; border: 3px solid var(--color-pastel-yellow); }
+
+        /* AREA DE LA CAMARA */
+        #reader { width: 100%; border-radius: 15px; overflow: hidden; display: none; margin-bottom: 15px; border: 3px dashed var(--color-pastel-pink); }
+        
+        /* BOTONES */
+        .btn { background-color: var(--color-pastel-pink); color: white; border: none; padding: 12px 30px; font-size: 1.5rem; border-radius: 50px; cursor: pointer; font-family: 'Chewy'; transition: 0.2s; box-shadow: 0 5px 0 #e07a8c; margin-top: 10px; width: 80%; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0 0; }
+        .btn-stop { background-color: #ff6b6b; box-shadow: 0 5px 0 #c92a2a; display: none; }
+
+        /* FONDO ESTRELLAS */
+        #stars-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+        .star { position: absolute; top: -50px; background: white; border-radius: 50%; box-shadow: 0 0 10px var(--color-pastel-yellow); opacity: 0.8; animation: fallDown linear forwards, sway ease-in-out infinite alternate; }
+        @keyframes fallDown { to { top: 110vh; opacity: 0; } }
+        @keyframes sway { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
+    </style>
+</head>
+<body>
+    <audio id="bg-music" loop autoplay> <source src="musica.mp3" type="audio/mpeg"> </audio>
+    <div id="stars-container"></div>
+
+    <div class="card">
+        <h2 id="pregunta-texto">Cargando misión...</h2>
+        <img id="gif-pregunta" src="" class="gif-img" alt="Gif">
+        
+        <div id="reader"></div>
+
+        <button class="btn" id="btn-scan" onclick="startScanner()">📸 Escanear Código</button>
+        <button class="btn btn-stop" id="btn-stop" onclick="stopScanner()">❌ Detener Cámara</button>
+    </div>
+
+    <script>
+        // ==========================================
+        //    CONFIGURACIÓN DE LA PREGUNTA (EDITAR AQUÍ)
+        // ==========================================
+
+        const textoPregunta = "Pregunta 1: ¿Recuerdas cual fue tu primer colección y donde esta?";
+        const nombreGif = "pompom1.gif"; 
+        
+        // ¡IMPORTANTE! Aquí pones qué debe decir el QR para ser válido.
+        // Opción A: Que el QR contenga la URL de la siguiente página (ej: "pregunta2.html")
+        // Opción B: Que el QR tenga una palabra clave (ej: "COLECCION")
+        // Yo recomiendo usar el nombre del siguiente archivo HTML para que sea automático:
+        const codigoEsperado = "plantilla_escaner2.html"; 
+
+        // ==========================================
+        //    LÓGICA DEL ESCÁNER (NO TOCAR)
+        // ==========================================
+
+        document.getElementById('pregunta-texto').innerText = textoPregunta;
+        document.getElementById('gif-pregunta').src = nombreGif;
+
+        let html5QrcodeScanner;
+
+        function startScanner() {
+            document.getElementById('reader').style.display = 'block';
+            document.getElementById('btn-scan').style.display = 'none';
+            document.getElementById('btn-stop').style.display = 'block';
+
+            html5QrcodeScanner = new Html5Qrcode("reader");
+
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+            
+            // Preferir cámara trasera
+            html5QrcodeScanner.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure);
+        }
+
+        function stopScanner() {
+            if(html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    document.getElementById('reader').style.display = 'none';
+                    document.getElementById('btn-scan').style.display = 'block';
+                    document.getElementById('btn-stop').style.display = 'none';
+                });
+            }
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // Detenemos el escáner
+            html5QrcodeScanner.stop();
+
+            // Verificamos si el QR escaneado contiene el texto esperado
+            // Usamos 'includes' por si el QR tiene la URL completa (https://sitio.com/pregunta2.html)
+            if (decodedText.includes(codigoEsperado)) {
+                Swal.fire({
+                    title: '¡Correcto! ✨',
+                    text: '¡Eres increíble! Vamos a la siguiente.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Redirigir a la siguiente página
+                    window.location.href = codigoEsperado;
+                });
+            } else {
+                Swal.fire({
+                    title: 'QR Incorrecto 😅',
+                    text: 'Este no es el lugar correcto, mi amor. Sigue buscando.',
+                    icon: 'error',
+                    confirmButtonColor: '#ff8fa3'
+                }).then(() => {
+                    // Reiniciar escáner si quieres, o dejar que ella le de click de nuevo
+                    stopScanner();
+                });
+            }
+        }
+
+        function onScanFailure(error) {
+            // No hacemos nada si falla el frame, es normal mientras busca
+        }
+
+        // Lógica de estrellas y música
+        const starsContainer = document.getElementById('stars-container');
+        setInterval(() => {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.width = Math.random() * 15 + 5 + 'px';
+            star.style.height = star.style.width;
+            star.style.animationDuration = (Math.random() * 5 + 3) + 's, ' + (Math.random() * 2 + 2) + 's';
+            starsContainer.appendChild(star);
+            setTimeout(() => star.remove(), 8000);
+        }, 200);
+        document.body.addEventListener('click', () => { document.getElementById('bg-music').play(); }, { once: true });
+
+    </script>
+</body>
+</html>
