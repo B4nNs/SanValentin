@@ -7,16 +7,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
     <style>
         :root { --color-pastel-yellow: #fdfd96; --color-pastel-pink: #ff8fa3; --color-bg-pink: #ffe6eb; --color-text: #d87093; }
-        body { margin: 0; padding: 20px; background-color: var(--color-bg-pink); font-family: 'Chewy', cursive; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; position: relative; text-align: center; }
-
-        h1 { font-size: 3rem; color: var(--color-text); margin-bottom: 20px; text-shadow: 2px 2px 0 white; max-width: 800px; }
         
-        .gif-container { width: 280px; height: auto; border: 6px solid white; border-radius: 50%; box-shadow: 0 0 30px rgba(255, 143, 163, 0.6); animation: float 3s ease-in-out infinite; }
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            background-color: var(--color-bg-pink); 
+            font-family: 'Chewy', cursive; 
+            /* CORRECCIÓN: Permitir scroll vertical si no cabe */
+            overflow-x: hidden;
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            position: relative; 
+            text-align: center; 
+        }
+
+        /* TEXTO RESPONSIVE */
+        h1 { 
+            /* Se adapta al tamaño de la pantalla */
+            font-size: clamp(2rem, 7vw, 3rem); 
+            color: var(--color-text); 
+            margin-bottom: 20px; 
+            text-shadow: 2px 2px 0 white; 
+            width: 100%;
+            max-width: 800px; 
+        }
+        
+        /* GIF RESPONSIVE */
+        .gif-container { 
+            width: 100%;
+            max-width: 280px; /* Límite en PC */
+            height: auto; 
+            border: 6px solid white; 
+            border-radius: 50%; 
+            box-shadow: 0 0 30px rgba(255, 143, 163, 0.6); 
+            animation: float 3s ease-in-out infinite; 
+        }
         
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
 
-        /* FONDO */
-        #stars-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        /* FONDO ESTRELLAS FIXED */
+        #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
         .star { position: absolute; top: -50px; background: white; border-radius: 50%; box-shadow: 0 0 10px var(--color-pastel-yellow); opacity: 0.8; animation: fallDown linear forwards, sway ease-in-out infinite alternate; }
         @keyframes fallDown { to { top: 110vh; opacity: 0; } }
         @keyframes sway { from { transform: translateX(-30px); } to { transform: translateX(30px); } }
