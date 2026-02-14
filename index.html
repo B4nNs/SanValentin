@@ -13,46 +13,47 @@
         }
         body {
             margin: 0;
-            padding: 0;
+            padding: 20px; /* Un poco de margen para que no pegue a los bordes */
             background-color: var(--color-bg-pink);
             font-family: 'Chewy', cursive;
-            overflow: hidden;
+            /* CORRECCIÓN: Permitir scroll vertical si no cabe, ocultar horizontal */
+            overflow-x: hidden;
+            overflow-y: auto; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            position: relative; /* Necesario para el fondo de estrellas */
+            min-height: 100vh; /* Crece si es necesario */
+            position: relative;
         }
 
         /* --- FONDO DE ESTRELLAS --- */
+        /* CAMBIO: position: fixed para que se queden quietas al scrollear */
         #stars-container {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Para que no interfiera con los clicks */
-            z-index: -1; /* Detrás de todo */
+            pointer-events: none;
+            z-index: -1;
         }
 
         .star {
             position: absolute;
-            top: -50px; /* Empiezan arriba fuera de pantalla */
+            top: -50px;
             background: white;
             border-radius: 50%;
-            /* Un brillo amarillento bonito */
             box-shadow: 
                 0 0 10px var(--color-pastel-yellow),
                 0 0 20px white;
             opacity: 0.8;
-            /* Animación doble: Caída y Zigzag (sway) */
             animation: fallDown linear forwards, sway ease-in-out infinite alternate;
         }
 
         @keyframes fallDown {
             to {
-                top: 110vh; /* Caen hasta salir por abajo */
+                top: 110vh;
                 opacity: 0;
             }
         }
@@ -61,8 +62,6 @@
             from { transform: translateX(-50px) rotate(0deg); }
             to { transform: translateX(50px) rotate(45deg); }
         }
-        /* --------------------------- */
-
 
         /* Botón de Música */
         #mute-btn {
@@ -90,43 +89,34 @@
             text-align: center;
             position: relative;
             z-index: 10;
-            /* Aseguramos que el contenido no se salga en pantallas pequeñas por la fuente gigante */
-            max-width: 90%; 
+            width: 100%;
+            max-width: 800px; /* Evita que se estire demasiado en monitores anchos */
         }
 
         /* Texto de Bienvenida */
         .welcome-text {
-            /* CAMBIO AQUI: Tamaño aumentado 2.5 veces (era 5rem) */
-            font-size: 12.5rem; 
-            line-height: 1; /* Para que no ocupe tanto espacio vertical */
+            /* CAMBIO: clamp hace que el texto sea responsivo automáticamente */
+            font-size: clamp(4rem, 15vw, 12.5rem); 
+            line-height: 1.1;
             color: var(--color-pastel-yellow);
             text-shadow: 
                 4px 4px 0px var(--color-pastel-pink), 
                 -2px -2px 0 #fff,
-                0 0 20px rgba(255, 255, 255, 0.5); /* Un poco más de glow */
+                0 0 20px rgba(255, 255, 255, 0.5);
             opacity: 0; 
-            margin: 0;
-            margin-bottom: 30px;
+            margin: 0 auto 30px auto;
             cursor: default;
-            white-space: nowrap; /* Intenta mantenerlo en una línea si cabe */
+            word-wrap: break-word; /* Evita desbordamiento horizontal */
         }
         
-        /* Ajuste para móviles: si la pantalla es muy chica, reducimos un poco la fuente gigante */
-        @media (max-width: 768px) {
-             .welcome-text {
-                 font-size: 6rem; /* Aún grande, pero manejable en celular */
-                 white-space: normal; /* Permite saltos de línea en celular */
-             }
-        }
-
-        /* Animación de entrada: Viene de abajo y hace Pop */
+        /* Animación de entrada */
         @keyframes popUp {
             0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
             70% { transform: translateY(-20px) scale(1.1); opacity: 1; }
             100% { transform: translateY(0) scale(1); opacity: 1; }
         }
 
-        /* Animación de rebote constante */
+        /* Animación de rebote */
         @keyframes floating {
             0% { transform: rotate(-2deg) translateY(0px); }
             50% { transform: rotate(2deg) translateY(-15px); }
@@ -143,7 +133,8 @@
 
         /* Imagen de Pompompurin */
         #pompom-gif {
-            width: 200px;
+            width: 100%;
+            max-width: 300px; /* Limita el ancho máximo */
             height: auto;
             opacity: 0;
             transform: scale(0);
@@ -164,8 +155,9 @@
             background-color: var(--color-pastel-pink);
             color: white;
             font-family: 'Chewy', cursive;
-            font-size: 2.5rem;
-            padding: 15px 50px;
+            /* CAMBIO: Texto del botón ajustable */
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            padding: 15px 40px;
             border: 5px solid white;
             border-radius: 50px;
             cursor: pointer;
